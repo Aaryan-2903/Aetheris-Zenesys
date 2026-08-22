@@ -1,217 +1,232 @@
 # ProcuraIQ
 
-> AI-Assisted Procurement Decision Intelligence Platform
+> **AI-Powered Procurement Decision Intelligence**
 
-ProcuraIQ does not stop at predicting the best vendor. It connects prediction, risk, financial exposure, transaction protection, payment, fulfillment tracking, and post-purchase feedback into one procurement workflow.
-
----
-
-## 🎯 The Problem
-
-Traditional procurement decisions often rely on:
-- Price comparison
-- Static vendor ratings
-- Manual vendor evaluation
-- Limited visibility into supplier risk
-- Poor visibility into financial exposure
-- Difficulty explaining why a vendor was selected
-
-Cheapest vendor does not necessarily mean best vendor.
-
-ProcuraIQ addresses this by combining prediction, business priorities, risk, financial exposure, protection, payment, and post-purchase intelligence into a single, cohesive platform.
+ProcuraIQ does not stop at detecting procurement risk. It converts procurement signals into measurable financial exposure, explains **WHY** the exposure exists, and recommends **WHAT ACTION** the procurement team should take next.
 
 ---
 
-## 💡 The Solution / USP
+## 📌 Problem
 
-The core decision flow of ProcuraIQ is:
+Traditional enterprise procurement systems are largely built to record, track, and process transactional purchase orders. While ERPs effectively maintain ledgers, procurement teams are still left with the heavy manual burden of interpreting disparate supplier signals:
+- Quoted price anomalies versus market benchmarks
+- Degraded supplier delivery and SLA track records
+- Unhedged advance payment risks and downside capital exposure
+- Unclear vendor reliability and quality variance
 
-**Predict → Prioritize → Assess Risk → Explain → Decide → Execute → Track**
-
-### Strong Differentiation:
-1. AI-driven vendor recommendation
-2. Risk-aware procurement
-3. Money-at-Risk quantification
-4. Transaction protection through contracts, warranty and insurance
-5. Integrated payment and procurement workflow
-6. Post-purchase tracking and feedback
-7. End-to-end procurement lifecycle instead of only vendor prediction
+Because traditional systems tell teams only *what happened after the fact*, billions in potential cost savings and risk mitigation opportunities are missed before purchase commitment.
 
 ---
 
-## 🔄 COMPLETE PROCUREMENT WORKFLOW
+## 💡 Solution
+
+ProcuraIQ transforms raw procurement data into real-time, explainable decision intelligence. Rather than offering passive dashboards or abstract risk indices, ProcuraIQ continuously evaluates supplier and procurement signals to provide:
+- **Quantified Financial Exposure**: Live calculation of **Money At Risk** before commitment.
+- **Explainable Decision Signals**: Root-cause transparency (e.g., price anomalies, lead-time variance, defect rates).
+- **Supplier Intelligence**: Multi-dimensional supplier ranking against delivery SLA, price, and quality.
+- **Automated Protection Playbooks**: Concrete mitigation actions (milestone-based payments, delivery SLA liquidated damages clauses, data-backed negotiation scripts).
+- **Enterprise ERP Integration**: SuiteCloud-ready integration layer connecting decisions directly to purchase workflows.
+
+---
+
+## ⚡ Core USP
+
+> **"From Risk Detection to Financial Exposure to Action."**
+
+Traditional systems tell procurement teams **WHAT** happened.  
+ProcuraIQ helps answer:
+1. **What is financially exposed?** — Immediate visibility into unhedged capital before purchase order creation.
+2. **Why is it exposed?** — Explainable signal breakdowns (price anomalies, delivery degradation, payment terms).
+3. **What should we do next?** — Prescriptive protection actions rather than blunt supplier rejections.
+
+---
+
+## 🔄 How It Works
 
 ```mermaid
 flowchart TD
-    A[Procurement Request] --> B[AI Prediction]
-    B --> C[Vendor Scoring]
-    C --> D[Risk Analysis]
-    D --> E[Financial Exposure]
-    E --> F[Contract / T&C / Code of Conduct]
-    F --> G[Warranty]
-    G --> H[Insurance]
-    H --> I[Return & Refund Policy]
-    I --> J[Purchase Order]
-    J --> K[PDF Generation]
-    K --> L[Razorpay Test Payment]
-    L --> M[Payment Verification]
-    M --> N[Payment Confirmed]
-    N --> O[Order Tracking]
-    O --> P[Processing]
-    P --> Q[Shipped]
-    Q --> R[In Transit]
-    R --> S[Out for Delivery]
-    S --> T[Delivered]
-    T --> U[Buyer Feedback]
-    U -.->|Updates Vendor Intelligence| C
+    A[Procurement Requirement] --> B[Supplier & Procurement Signals]
+    B --> C[AI / Decision Intelligence]
+    C --> D[Financial Exposure]
+    D --> E[Automation Engine]
+    E --> F[Explainable Decision]
+    F --> G[Recommended Protection]
+    G --> H[Procurement Action]
+    H --> I[ERP / NetSuite Workflow]
 ```
 
 ---
 
-## 🏗️ Architecture Stack
+## 🚀 Key Features
 
-```mermaid
-flowchart TD
-    A[Frontend] --> B[API Layer]
-    B --> C[FastAPI Backend]
-    C --> D[AI / Scoring / Risk / Financial Engines]
-    C --> E[Procurement Workflow]
-    E --> F[Contracts / Warranty / Insurance / PO]
-    E --> G[Razorpay]
-    E --> H[Order Tracking]
-    E --> I[Feedback]
-```
-
-- **Frontend**: React, Vite *(In Progress)*
-- **API Layer**: Centralized strictly typed TypeScript client *(Completed)*
-- **Backend**: FastAPI, Python *(Completed)*
-- **Machine Learning**: Scikit-learn, Pandas, NumPy *(Completed)*
-- **PDF Generation**: ReportLab *(Completed)*
+- **Decision Center**: Hero command dashboard highlighting Money At Risk, explainable risk flags, and dynamic mitigation actions.
+- **Procurement Intelligence**: Machine learning prediction modeling delivery probability, lead-time variance, and outcome risk.
+- **Supplier Discovery**: Multi-vendor search scored deterministically against verified on-time rates, quality scores, and price indices.
+- **Supplier Comparison**: Multi-dimensional scorecards comparing composite scores, unit costs, delivery reliability, and financial exposure.
+- **Benchmark Analysis**: Market median price tracking, category variance analysis, and immediate savings identification.
+- **Savings Intelligence**: Audit trail of realized value capture, price variance recapture, and protected capital.
+- **Negotiation Support**: Strategic playbooks with pricing leverage calculations and talking points.
+- **Approval Workflow**: Multi-tier governance queue with risk threshold compliance sign-offs.
+- **Purchase Orders & Tracking**: Legally protected purchase order issuance, lifecycle tracking timeline, and PDF contract export.
+- **Payment Integration**: Secure payment verification workflow for milestone disbursements.
+- **Financial Exposure Engine**: Mathematical quantification of downside capital exposure based on supplier health and advance payment terms.
+- **Oracle NetSuite Integration**: SuiteCloud-ready integration architecture.
 
 ---
 
-## 🚀 Feature Capabilities
+## ⚙️ Automation Engine
 
-| Capability | Status |
+ProcuraIQ features a domain-oriented procurement automation engine (`POST /api/automation/evaluate`) that deterministically evaluates live procurement telemetry:
+- **Price Anomalies**: Statistical deviation from historical category median benchmarks.
+- **Delivery Degradation**: Weakening on-time delivery rates below agreed operational thresholds.
+- **Quality Degradation**: Elevated defect rates and quality scorecard drop-offs.
+- **Payment & Financial Exposure**: Unhedged advance payment terms combined with supplier risk vectors.
+- **ML Prediction Confidence**: Output confidence scores from domain-specific procurement outcome models.
+
+The automation engine translates complex risk vectors into standardized, human-readable actions:
+- `Action Required`
+- `Approval Required`
+- `Review Price`
+- `Review Delivery`
+- `Vendor Review`
+- `Payment Review`
+- `Proceed`
+
+---
+
+## 🏢 NetSuite Integration
+
+ProcuraIQ is architected to integrate with Oracle NetSuite using SuiteCloud-compatible integration standards.
+
+> **Integration Status**: NetSuite integration is currently configured as a SuiteCloud-ready integration layer / demonstration integration. Real NetSuite authentication and production synchronization can be connected seamlessly via environment credentials without restructuring the application.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart TD
+    subgraph Frontend_App ["Frontend (React + Vite)"]
+        UI["Decision Center & Workspaces"]
+        Client["Centralized API Client (src/api/client.ts)"]
+        UI --> Client
+    end
+
+    subgraph Backend_App ["FastAPI Backend"]
+        Router["FastAPI Routers (/api/*)"]
+        Client --> Router
+
+        subgraph Core_Services ["Procurement Services"]
+            Auto["Automation Service"]
+            Fin["Financial Exposure Engine"]
+            Pred["Procurement Prediction ML"]
+            Risk["Risk & Scoring Engine"]
+            Auth["JWT Auth Service"]
+            PO["Purchase Order & PDF Engine"]
+            ERP["NetSuite Integration Adapter"]
+        end
+
+        Router --> Auto
+        Router --> Fin
+        Router --> Pred
+        Router --> Risk
+        Router --> Auth
+        Router --> PO
+        Router --> ERP
+    end
+
+    subgraph Data_Layer ["Data & External Services"]
+        DB[(Database / State Layer)]
+        NS[Oracle NetSuite SuiteCloud]
+        Auto --> DB
+        Fin --> DB
+        ERP -.-> NS
+    end
+```
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
 |---|---|
-| AI Procurement Prediction | Implemented |
-| Vendor Scoring | Implemented |
-| Risk Engine | Implemented |
-| Financial Exposure | Implemented |
-| Contracts & T&C | Implemented |
-| Code of Conduct | Implemented |
-| Warranty Plans | Implemented |
-| Insurance | Implemented |
-| Order Repeat Ratio | Implemented |
-| Buyer Feedback | Implemented |
-| Purchase Orders | Implemented |
-| PO PDF | Implemented |
-| Return & Refund Policy | Implemented |
-| Razorpay Test Mode | Implemented |
-| Payment Verification | Implemented |
-| Order Tracking | Implemented |
-| Simulated Live Location | Frontend Prototype |
+| **Frontend** | React 19, TypeScript, Vite 8, Tailwind CSS, Lucide Icons, React Router |
+| **API Client** | Centralized typed client with JWT auto-injection & resilience error handling |
+| **Backend** | FastAPI, Python 3.12, Uvicorn, Pydantic, HTTPX |
+| **Machine Learning** | Scikit-learn, Pandas, NumPy |
+| **Authentication** | Passlib, Bcrypt, PyJWT |
+| **ERP Integration** | Oracle NetSuite SuiteCloud-Ready Architecture |
+| **Deployment** | Vercel (Frontend), Render (Backend) |
 
 ---
 
-## 💳 Payment Gateway
+## 🌐 Live Demo & Endpoints
 
-ProcuraIQ integrates Razorpay in **TEST MODE**. 
-
-**Flow:**
-`Purchase Order` → `Create Razorpay Order` → `Razorpay Test Checkout` → `Server-side Signature Verification` → `Purchase Order marked PAID` → `Order Tracking marked PAYMENT_CONFIRMED`
-
-**Security Points:**
-- Razorpay Key Secret remains strictly server-side.
-- Payment amount is calculated from the server-side Purchase Order.
-- Frontend cannot override or tamper with the payment amount.
-- Payment is not marked successful without cryptographic signature verification.
-- No real money is processed in Test Mode.
+- **Live Application**: [https://procura-iq.vercel.app/](https://procura-iq.vercel.app/)
+- **Backend API**: [https://aetheris-zenesys.onrender.com](https://aetheris-zenesys.onrender.com)
+- **Interactive API Documentation**: [https://aetheris-zenesys.onrender.com/docs](https://aetheris-zenesys.onrender.com/docs)
 
 ---
 
-## 📦 Order Tracking
+## 🎬 End-to-End Demo Flow
 
-The procurement cycle operates on a deterministic lifecycle tracking system:
+```
+1. Authentication
+   └─ Sign in to ProcuraIQ enterprise workspace
 
-`PENDING_PAYMENT` → `PAYMENT_CONFIRMED` → `PROCESSING` → `SHIPPED` → `IN_TRANSIT` → `OUT_FOR_DELIVERY` → `DELIVERED`
+2. New Procurement Request
+   └─ Submit item specifications, category, quantity, unit price, and delivery SLA
 
-- **Tracking History**: A full timestamped log of all transitions is maintained.
-- **Expected Delivery Date**: Calculated and exposed per order.
-- **Invalid Transition Protection**: The backend rigidly enforces lifecycle steps, preventing illogical jumps (e.g. `DELIVERED` → `PROCESSING` or jumping over `PAYMENT_CONFIRMED`).
+3. Procurement Signal Evaluation
+   └─ Automated signal detection evaluates price, delivery, and supplier history
 
-### 📍 Shipment Location
-The frontend will provide a simulated live shipment location experience for demonstration purposes. 
-*Note: Shipment location is simulated in the prototype. Production deployment can integrate real logistics/carrier GPS APIs.*
+4. Financial Exposure Quantification
+   └─ Real-time calculation of "Money At Risk" before transaction commitment
 
----
+5. Explainable Signal Breakdown
+   └─ Root-cause transparency: price variance (+13.6%), delivery degradation (82%)
 
-## 🔁 Return & Refund
-Purchase Orders can contain deterministic Return & Refund Policies covering:
-- Return window
-- Eligible return conditions
-- Refund method
-- Refund processing time
-- Return shipping responsibility
-- Restocking fee
-- Non-returnable conditions
+6. Automation Decision
+   └─ Prescriptive action generated (Action Required / Review Price)
 
-The policy is also directly rendered and included in the generated Purchase Order PDF.
+7. Recommended Protection Plan
+   └─ 30/70 payment milestone schedule + delivery SLA penalty terms
 
----
-
-## ⭐ Buyer Feedback
-Buyers can submit post-purchase feedback after an order is marked `DELIVERED`. 
-
-**Ratings collected:**
-- Overall
-- Quality
-- Delivery
-- Responsiveness
-- Optional Comments
-
-**Vendor Feedback Summaries provide:**
-- Feedback count
-- Average overall rating
-- Average quality rating
-- Average delivery rating
-- Average responsiveness rating
+8. Procurement Action & PO Issuance
+   └─ Legally bound purchase order issued with downloadable PDF and tracking
+```
 
 ---
 
-## 🎬 Demo Flow
+## 💡 Why ProcuraIQ?
 
-1. Enter procurement requirement
-2. ProcuraIQ predicts/recommends vendor
-3. Compare vendor score and risk
-4. View Money At Risk
-5. Configure contract, warranty and insurance
-6. Review Return & Refund Policy
-7. Generate Purchase Order
-8. Download PO PDF
-9. Proceed through Razorpay Test Mode
-10. Verify payment
-11. Track order
-12. View simulated shipment location
-13. Mark order delivered
-14. Submit buyer feedback
+| Traditional ERP Workflow | ProcuraIQ Decision Workflow |
+|---|---|
+| **Record** transactions after decisions are made | **Understand** multi-source supplier telemetry |
+| **Track** static order status | **Quantify** financial downside (Money At Risk) |
+| **Report** backward-looking spend | **Explain** root-cause anomalies in real-time |
+| Rely on manual buyer discretion | **Recommend** concrete contract protection plans |
+| Disconnected from risk mitigation | **Act** before capital is committed |
 
 ---
 
-## 🧪 Testing
+## 🔮 Future Scope
 
-The backend modules have dedicated deterministic test suites. The latest complete test run (including risk, financial, contracts, warranty, insurance, repeat ratio, feedback, purchase orders, tracking, and payments) passed successfully.
-
-*(Note: When running tests via `pytest` or `python test_*.py`, you may observe a `StarletteDeprecationWarning` regarding `TestClient` from FastAPI—this is a non-blocking internal framework warning and not an application failure.)*
+- **Deep NetSuite Two-Way Sync**: Native SuiteScript bundle for bidirectional purchase requisition approvals.
+- **Multi-ERP Connectors**: Adapters for SAP S/4HANA, Coupa, and Microsoft Dynamics 365.
+- **Continuous Market Indexing**: Automated real-time indexing of global commodities and hardware pricing.
+- **Autonomous Negotiation Workflows**: AI-mediated counter-offer communication with supplier portals.
+- **Dynamic ESG & Carbon Auditing**: Supplier sustainability tracking integrated into scoring matrices.
 
 ---
 
-## 🚀 Local Setup
+## 👥 Team & Repository
 
-1. Clone the repository.
-2. Setup the environment: `pip install -r backend/requirements.txt`
-3. Configure the `.env` (See `.env.example`).
-4. Run the backend locally: `uvicorn backend.main:app --reload`
-5. Run verification tests: `pytest`
+- **Repository**: [Aaryan-2903 / Aetheris-Zenesys](https://github.com/Aaryan-2903/Aetheris-Zenesys)
+- **Platform**: ProcuraIQ Enterprise Procurement Intelligence
 
-*Note: The project requires local environment variables for configuration. Never commit actual credentials to version control.*
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
