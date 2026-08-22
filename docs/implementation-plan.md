@@ -145,7 +145,7 @@ All tables created in Supabase. Connection verified from Python.
 
 ### 6.3 ML Service + Prediction Router
 
-- [ ] `services/ml_service.py` — load `model.joblib`, load `feature_columns.json`, inference function
+- [ ] `services/procurement_prediction_service.py` — load `model.joblib`, load `feature_columns.json`, inference function
 - [ ] `routers/predict.py` — `POST /api/predict` — takes vendor+order params, returns predictions
 
 ### 6.4 Scoring Service + Router

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ProcuraIQ — Decision Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f9f9fb;--card:#fff;--navy:#00174b;--blue:#0066cc;--text:#1a1c1d;--muted:#727784;--border:#e5e5ea;--red:#ff3b30;--redbg:#fff0f0;--green:#17803d;--greenbg:#effaf2;--shadow:0 4px 24px rgba(0,0,0,.04)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Hanken Grotesk",sans-serif}
+button,input{font:inherit}.app{display:flex;height:100vh;overflow:hidden}.sidebar{width:260px;background:rgba(255,255,255,.9);border-right:1px solid var(--border);padding:20px;display:flex;flex-direction:column;flex-shrink:0}.brand{display:flex;align-items:center;gap:11px;padding:5px 4px 28px}.logo{width:40px;height:40px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;font-size:19px}.brand b{font-size:20px;letter-spacing:-.04em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}.new{border:0;background:var(--navy);color:#fff;border-radius:999px;padding:12px 15px;font-weight:600;cursor:pointer;margin-bottom:22px}.nav{display:flex;flex-direction:column;gap:4px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:9px;color:#606673;cursor:pointer;display:flex;gap:12px;align-items:center}.nav button:hover,.nav button.active{background:#eaf2ff;color:#004e9f;font-weight:600}.icon{width:20px;text-align:center}.bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:12px}.main{flex:1;overflow:auto}.topbar{height:72px;border-bottom:1px solid var(--border);background:rgba(249,249,251,.9);display:flex;align-items:center;gap:18px;padding:0 34px;position:sticky;top:0;z-index:5}.search{max-width:460px;flex:1;background:#fff;border:1px solid var(--border);border-radius:999px;padding:11px 16px;color:var(--muted);outline:none}.topright{margin-left:auto;display:flex;gap:14px;align-items:center;color:var(--muted)}.avatar{width:34px;height:34px;border-radius:50%;background:#dbe8f8;display:grid;place-items:center;color:var(--navy);font-weight:700}.content{max-width:1440px;margin:auto;padding:38px 56px 60px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}.title{font-size:38px;letter-spacing:-.035em;margin:5px 0 7px}.subtitle{color:#5f6673;margin:0 0 28px;font-size:15px}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}.kpi{padding:22px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;right:-25px;top:-25px;width:90px;height:90px;border-radius:50%;background:#0066cc08}.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}.kpi-value{font-size:34px;font-weight:600;letter-spacing:-.04em;margin:12px 0 4px}.kpi-foot{font-size:12px;color:var(--muted)}.up{color:var(--green)}.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.8fr);gap:20px}.decision{padding:28px;border-color:#d8e5f7;position:relative}.decision-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.badge{display:inline-flex;padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;letter-spacing:.05em}.badge.red{color:#b42318;background:var(--redbg)}.decision h2{font-size:24px;margin:12px 0 5px;letter-spacing:-.025em}.decision p{color:#656c78;line-height:1.5;margin:0}.exposure{margin:24px 0;padding:19px 20px;border-radius:14px;background:#fff7f6;border:1px solid #ffe0dc;display:flex;align-items:center;justify-content:space-between}.exposure strong{font-size:34px;color:#b42318;letter-spacing:-.04em}.exposure span{font-size:12px;color:#777}.section-title{font-size:15px;font-weight:600;margin:22px 0 12px}.signals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.signal{padding:16px;border:1px solid var(--border);border-radius:12px}.signal .sicon{color:#b42318;font-size:18px}.signal b{display:block;font-size:13px;margin:8px 0 5px}.signal small{color:var(--muted);line-height:1.4;display:block}.protection{padding:25px}.protection h3{margin:4px 0 6px;font-size:20px}.protection>p{font-size:13px;color:var(--muted);margin:0 0 18px}.protect-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}.num{width:28px;height:28px;border-radius:50%;background:#edf4ff;color:var(--blue);display:grid;place-items:center;font-size:11px;font-weight:700}.protect-item b{font-size:13px}.protect-item span{display:block;font-size:12px;color:var(--muted);margin-top:2px}.primary{width:100%;border:0;border-radius:999px;background:var(--navy);color:#fff;padding:12px;font-weight:600;cursor:pointer;margin-top:19px}.secondary{width:100%;border:1px solid #d1d1d6;border-radius:999px;background:#fff;padding:11px;font-weight:600;cursor:pointer;margin-top:9px}.integration{margin-top:18px;padding:20px}.integration-row{display:flex;justify-content:space-between;align-items:center}.status{color:var(--green);font-size:12px;font-weight:600}.queue{margin-top:20px;padding:0;overflow:hidden}.queue-head{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.queue-head h3{margin:0;font-size:18px}.queue-search{border:1px solid var(--border);border-radius:9px;padding:9px 12px;outline:none;width:220px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:15px 22px;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap}th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:#fafafd}td strong{font-weight:600}.decision-pill{display:inline-block;padding:5px 9px;border-radius:6px;font-size:11px;font-weight:600}.review{background:#fff4df;color:#9a6700}.proceed{background:var(--greenbg);color:var(--green)}.approval{background:var(--redbg);color:#b42318}.toast{position:fixed;right:28px;bottom:28px;background:var(--navy);color:#fff;padding:14px 18px;border-radius:12px;box-shadow:0 10px 35px #0003;transform:translateY(100px);opacity:0;transition:.25s;z-index:20}.toast.show{transform:translateY(0);opacity:1}.modal-bg{position:fixed;inset:0;background:#00174b55;display:none;place-items:center;z-index:15;padding:20px}.modal-bg.show{display:grid}.modal{background:#fff;border-radius:18px;width:min(560px,100%);padding:28px;box-shadow:0 25px 80px #0003}.modal h3{margin:0 0 8px;font-size:22px}.modal p{color:var(--muted);font-size:13px;line-height:1.5}.modal-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px}.close{float:right;border:0;background:#f1f2f4;border-radius:50%;width:30px;height:30px;cursor:pointer}@media(max-width:1050px){.sidebar{width:220px}.content{padding:30px}.kpis{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.signals{grid-template-columns:1fr}}@media(max-width:700px){.sidebar{display:none}.topbar{padding:0 16px}.content{padding:24px 16px}.title{font-size:30px}.kpis{grid-template-columns:1fr}.signals{grid-template-columns:1fr}.queue-search{width:150px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">P</div><div><b>ProcuraIQ</b><small>Enterprise Procurement</small></div></div>
+  <button class="new" onclick="toast('New procurement request started')">＋ New Procurement</button>
+  <div class="nav">
+    <button class="active" onclick="setActive(this)"><span class="icon">◈</span>Decision Center</button>
+    <button onclick="setActive(this)"><span class="icon">▣</span>Requirement</button>
+    <button onclick="setActive(this)"><span class="icon">⌕</span>Discovery</button>
+    <button onclick="setActive(this)"><span class="icon">⇄</span>Comparison</button>
+    <button onclick="setActive(this)"><span class="icon">▥</span>Benchmark</button>
+    <button onclick="setActive(this)"><span class="icon">◉</span>Savings</button>
+    <button onclick="setActive(this)"><span class="icon">♢</span>Negotiation</button>
+    <button onclick="setActive(this)"><span class="icon">☑</span>Approval</button>
+    <button onclick="setActive(this)"><span class="icon">▱</span>Purchase Order</button>
+  </div>
+  <div class="bottom">
+    <div class="nav"><button><span class="icon">⚙</span>Settings</button><button><span class="icon">?</span>Support</button></div>
+  </div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <input class="search" placeholder="Search procurement data..." oninput="filterTable(this.value)">
+  <div class="topright"><span>◌</span><span>?</span><div class="avatar">A</div></div>
+</header>
+<section class="content">
+  <div class="eyebrow">Procurement Intelligence</div>
+  <h1 class="title">Decision Center</h1>
+  <p class="subtitle">From procurement signals to action — understand exposure, explain the decision, and act before value is lost.</p>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="kpi-label">Potential Savings</div><div class="kpi-value">₹12.4M</div><div class="kpi-foot up">↑ 15.2% vs last quarter</div></div>
+    <div class="card kpi"><div class="kpi-label">Realized Savings</div><div class="kpi-value">₹8.1M</div><div class="kpi-foot up">↑ 8.4% vs last quarter</div></div>
+    <div class="card kpi"><div class="kpi-label">Financial Exposure</div><div class="kpi-value">₹5.2L</div><div class="kpi-foot">Current active exposure</div></div>
+    <div class="card kpi"><div class="kpi-label">Active Decisions</div><div class="kpi-value">14</div><div class="kpi-foot">4 require action today</div></div>
+  </div>
+
+  <div class="layout">
+    <div class="card decision">
+      <div class="decision-head"><div><span class="badge red">ACTION REQUIRED</span><h2>IT Hardware Procurement — Apex Parts Intl.</h2><p>ProcuraIQ found a financially exposed purchase and converted the signals into a recommended protection plan.</p></div></div>
+      <div class="exposure"><div><span>Estimated money at risk</span><strong>₹5.2L</strong></div><span>Before commitment</span></div>
+      <div class="section-title">Why ProcuraIQ is flagging this</div>
+      <div class="signals">
+        <div class="signal"><div class="sicon">▲</div><b>Price anomaly</b><small>Current quote is above the observed market benchmark.</small></div>
+        <div class="signal"><div class="sicon">◷</div><b>Delivery performance</b><small>Recent supplier performance requires review before commitment.</small></div>
+        <div class="signal"><div class="sicon">₹</div><b>Financial exposure</b><small>Payment and delivery terms increase downside if performance slips.</small></div>
+      </div>
+      <div class="section-title">Decision</div>
+      <p><strong>Recommended:</strong> protect the transaction before approval rather than simply rejecting the supplier.</p>
+      <div style="display:flex;gap:10px;margin-top:18px"><button class="primary" style="margin:0" onclick="openModal('plan')">Apply Protection Plan</button><button class="secondary" style="margin:0" onclick="openModal('supplier')">Review Supplier</button></div>
+    </div>
+
+    <div>
+      <div class="card protection">
+        <div class="eyebrow">Recommended Protection</div><h3>Reduce downside before approval</h3><p>ProcuraIQ converts detected signals into practical procurement controls.</p>
+        <div class="protect-item"><div class="num">01</div><div><b>Milestone-based payment</b><span>Reduce upfront financial exposure.</span></div></div>
+        <div class="protect-item"><div class="num">02</div><div><b>Delivery SLA clause</b><span>Tie payment to delivery performance.</span></div></div>
+        <div class="protect-item"><div class="num">03</div><div><b>Negotiate quote</b><span>Use benchmark variance as leverage.</span></div></div>
+        <button class="primary" onclick="openModal('negotiation')">Generate Negotiation Plan</button>
+      </div>
+      <div class="card integration"><div class="integration-row"><div><b>ERP Integration</b><div style="font-size:12px;color:var(--muted);margin-top:4px">Oracle NetSuite · SuiteCloud Ready</div></div><span class="status">● Ready</span></div></div>
+    </div>
+  </div>
+
+  <div class="card queue">
+    <div class="queue-head"><h3>Live Procurement Queue</h3><input class="queue-search" placeholder="Filter requests..." oninput="filterTable(this.value)"></div>
+    <div class="table-wrap"><table><thead><tr><th>Request</th><th>Supplier</th><th>Exposure</th><th>Decision</th></tr></thead>
+    <tbody id="queue">
+      <tr><td><strong>Industrial Fasteners</strong></td><td>Apex Parts Intl.</td><td>₹2.1L</td><td><span class="decision-pill review">Review Price</span></td></tr>
+      <tr><td><strong>IT Hardware</strong></td><td>TechCorp Solutions</td><td>₹1.8L</td><td><span class="decision-pill proceed">Proceed</span></td></tr>
+      <tr><td><strong>Raw Materials</strong></td><td>Global Mfg Inc.</td><td>₹1.3L</td><td><span class="decision-pill approval">Approval Required</span></td></tr>
+      <tr><td><strong>Office Equipment</strong></td><td>Nexus Industries</td><td>₹72K</td><td><span class="decision-pill proceed">Proceed</span></td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+function setActive(el){document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));el.classList.add('active');toast(el.textContent.trim()+' selected');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2400)}
+function openModal(type){
+ const c=document.getElementById('modalContent');
+ if(type==='plan') c.innerHTML='<h3>Protection Plan Ready</h3><p>ProcuraIQ has prepared controls for the Apex Parts Intl. transaction.</p><div class="modal-row"><b>Payment</b><span>Milestone-based</span></div><div class="modal-row"><b>Delivery</b><span>SLA-linked</span></div><div class="modal-row"><b>Negotiation</b><span>Benchmark-backed</span></div><button class="primary" onclick="closeModal();toast(\'Protection plan applied successfully\')">Confirm & Apply</button>';
+ if(type==='supplier') c.innerHTML='<h3>Apex Parts Intl.</h3><p>Supplier decision context assembled from procurement signals.</p><div class="modal-row"><b>Quote position</b><span style="color:#b42318">Above benchmark</span></div><div class="modal-row"><b>Delivery trend</b><span>Requires review</span></div><div class="modal-row"><b>Recommended</b><span>Protect transaction</span></div><button class="primary" onclick="closeModal()">Continue Review</button>';
+ if(type==='negotiation') c.innerHTML='<h3>Negotiation Plan</h3><p>Use the detected signals as leverage during supplier negotiation.</p><div class="modal-row"><b>Opening position</b><span>Benchmark-aligned quote</span></div><div class="modal-row"><b>Leverage</b><span>Price variance + delivery</span></div><div class="modal-row"><b>Target outcome</b><span>Lower upfront exposure</span></div><button class="primary" onclick="closeModal();toast(\'Negotiation plan generated\')">Generate Script</button>';
+ document.getElementById('modalBg').classList.add('show');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('show')}
+function filterTable(q){q=q.toLowerCase();document.querySelectorAll('#queue tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none')}
+</script>
+</body>
+</html>

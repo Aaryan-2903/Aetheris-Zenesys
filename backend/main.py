@@ -1,6 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routers import predict, vendors, procurement, risk, financial, score, contracts, warranty, insurance, repeat_ratio, feedback, purchase_orders, payments
+from backend.routers import (
+    score,
+    risk,
+    financial,
+    predict,
+    contracts,
+    warranty,
+    insurance,
+    repeat_ratio,
+    feedback,
+    purchase_orders,
+    payments,
+    auth,
+    automation,
+    netsuite,
+    vendors,
+    procurement
+)
 
 app = FastAPI(title="ProcuraIQ API", version="1.0.0")
 
@@ -14,6 +31,7 @@ app.add_middleware(
 )
 
 # API Routers
+app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(predict.router, prefix="/api/predict", tags=["Predict"])
 app.include_router(vendors.router, prefix="/api/vendors", tags=["Vendors"])
 app.include_router(procurement.router, prefix="/api/procurement", tags=["Procurement"])
@@ -27,6 +45,8 @@ app.include_router(repeat_ratio.router, prefix="/api/repeat-ratio", tags=["Vendo
 app.include_router(feedback.router, prefix="/api/feedback", tags=["Feedback"])
 app.include_router(purchase_orders.router, prefix="/api/purchase-orders", tags=["Purchase Orders"])
 app.include_router(payments.router, prefix="/api/payments", tags=["Payments"])
+app.include_router(automation.router, tags=["Automation"])
+app.include_router(netsuite.router, tags=["NetSuite Integration"])
 
 @app.get("/api/health")
 def health_check():

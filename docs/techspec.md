@@ -121,7 +121,7 @@ backend/
 │   ├── risk.py              # Risk assessment engine
 │   └── financial.py         # Money At Risk / Financial Exposure engine
 ├── services/
-│   ├── ml_service.py        # Model loading and inference
+│   ├── procurement_prediction_service.py        # Model loading and inference
 │   ├── scoring_service.py   # Deterministic vendor scoring
 │   ├── risk_service.py      # Risk calculation logic
 │   └── financial_service.py # Financial exposure calculation

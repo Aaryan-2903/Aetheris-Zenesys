@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from backend.models.schemas import PredictionRequest, PredictionResponse
-from backend.services.ml_service import get_prediction
+from backend.services.procurement_prediction_service import get_prediction
 
 router = APIRouter()
 

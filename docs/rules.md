@@ -30,7 +30,7 @@ ProcuraIQ uses five distinct calculation layers. Each has a defined role. They m
 - Generate any number not produced by the model
 
 **Rules:**
-- All predictions come from `model.joblib` via `ml_service.py`
+- All predictions come from `model.joblib` via `procurement_prediction_service.py`
 - The model is trained on real data with real relationships
 - Prediction output: `predicted_outcome` (0/1) and `confidence_score` (0.0–1.0)
 - Never hardcode, mock, or fabricate a prediction

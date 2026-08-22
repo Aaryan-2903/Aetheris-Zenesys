@@ -86,7 +86,7 @@ Each step is sequential. No step is skipped. All results from earlier steps feed
 
 **System Actions:**
 - For each candidate vendor, construct the feature vector from vendor attributes and order parameters
-- Call ML model (`model.joblib`) via `ml_service.py`
+- Call Prediction model (`model.joblib`) via `procurement_prediction_service.py`
 - Receive `predicted_outcome` (1=success, 0=failure) and `confidence_score` per vendor
 
 **API Call:**

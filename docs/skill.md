@@ -60,7 +60,7 @@ There are five distinct layers. Each has a defined role. Never conflate them.
 
 | Layer | Role | Owner |
 |---|---|---|
-| ML Prediction | Predict procurement outcome independently | `ml_service.py` + `model.joblib` |
+| Procurement Prediction | Predict procurement outcome independently | `procurement_prediction_service.py` + `model.joblib` |
 | Deterministic Business Scoring | Score and rank vendors independently | `scoring_service.py` |
 | Risk Calculation | Calculate risk scores independently | `risk_service.py` |
 | Financial Exposure | Calculate Money At Risk | `financial_service.py` |

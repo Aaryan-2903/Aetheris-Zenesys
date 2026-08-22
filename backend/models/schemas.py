@@ -1,5 +1,31 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional, Dict, Any
+from datetime import datetime
+
+# --- Auth Schemas ---
+
+class UserSignup(BaseModel):
+    name: str = Field(..., min_length=2)
+    email: EmailStr
+    password: str = Field(..., min_length=8)
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserResponse(BaseModel):
+    user_id: str
+    name: str
+    email: EmailStr
+    role: str
+    created_at: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse
+
+# --- Prediction & Scoring Schemas ---
 
 class PredictionRequest(BaseModel):
     category: str = Field(..., description="Procurement category")
@@ -341,4 +367,33 @@ class PaymentVerifyRequest(BaseModel):
     razorpay_payment_id: str
     razorpay_signature: str
 
+# --- Automation Engine Schemas ---
 
+class AutomationEvaluationRequest(BaseModel):
+    vendor_id: str
+    category: str
+    unit_price: float
+    quantity: int
+    lead_time_days: int
+    payment_terms_days: int
+    advance_payment_pct: float
+    historical_on_time_rate: float
+    historical_quality_score: float
+    historical_avg_price: float
+    vendor_defect_rate: float
+    vendor_transaction_count: int
+    vendor_category_spend: float
+    total_category_spend: float
+    historical_price_stddev: float
+
+class GeneratedAction(BaseModel):
+    action: str
+    priority: str
+    reason: str
+    recommendation: str
+    trigger_source: str
+
+class AutomationEvaluationResponse(BaseModel):
+    automation_status: str
+    generated_actions: List[GeneratedAction]
+    created_at: str
