@@ -1,7 +1,7 @@
 import uuid
 import io
 from datetime import datetime
-from backend.models.schemas import PurchaseOrderRequest, PurchaseOrderResponse
+from backend.models.schemas import PurchaseOrderRequest, PurchaseOrderResponse, TrackingHistoryEvent, OrderTrackingResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -10,9 +10,33 @@ from fastapi import HTTPException
 # In-memory store for MVP
 purchase_order_db = []
 
+VALID_TRANSITIONS = {
+    "PENDING_PAYMENT": ["PAYMENT_CONFIRMED", "CANCELLED"],
+    "PAYMENT_CONFIRMED": ["PROCESSING"],
+    "PROCESSING": ["SHIPPED", "CANCELLED"],
+    "SHIPPED": ["IN_TRANSIT"],
+    "IN_TRANSIT": ["OUT_FOR_DELIVERY"],
+    "OUT_FOR_DELIVERY": ["DELIVERED"],
+    "DELIVERED": [],
+    "CANCELLED": []
+}
+
+ALL_STEPS = [
+    "PENDING_PAYMENT", 
+    "PAYMENT_CONFIRMED", 
+    "PROCESSING", 
+    "SHIPPED", 
+    "IN_TRANSIT", 
+    "OUT_FOR_DELIVERY", 
+    "DELIVERED"
+]
+
 def create_purchase_order(request: PurchaseOrderRequest) -> PurchaseOrderResponse:
     subtotal = request.quantity * request.unit_price
     total_amount = subtotal + request.warranty_fee + request.insurance_cost
+    now_iso = datetime.utcnow().isoformat() + "Z"
+    
+    initial_event = TrackingHistoryEvent(status="PENDING_PAYMENT", timestamp=now_iso)
     
     po = PurchaseOrderResponse(
         purchase_order_id=f"PO-{str(uuid.uuid4())[:8].upper()}",
@@ -38,9 +62,11 @@ def create_purchase_order(request: PurchaseOrderRequest) -> PurchaseOrderRespons
         payment_status="PENDING_PAYMENT",
         status="Created",
         order_tracking_status="PENDING_PAYMENT",
+        tracking_updated_at=now_iso,
+        tracking_history=[initial_event],
         razorpay_order_id=None,
         razorpay_payment_id=None,
-        created_at=datetime.utcnow().isoformat() + "Z"
+        created_at=now_iso
     )
     purchase_order_db.append(po)
     return po
@@ -57,6 +83,51 @@ def update_purchase_order(po: PurchaseOrderResponse):
             purchase_order_db[i] = po
             return po
     raise HTTPException(status_code=404, detail="Purchase Order not found")
+
+def get_tracking_info(po: PurchaseOrderResponse) -> OrderTrackingResponse:
+    current_status = po.order_tracking_status
+    valid_next = VALID_TRANSITIONS.get(current_status, [])
+    
+    # Calculate completed steps
+    completed_steps = []
+    next_step = None
+    if current_status == "CANCELLED":
+        completed_steps = [e.status for e in po.tracking_history]
+    else:
+        try:
+            curr_idx = ALL_STEPS.index(current_status)
+            completed_steps = ALL_STEPS[:curr_idx + 1]
+            if curr_idx + 1 < len(ALL_STEPS):
+                next_step = ALL_STEPS[curr_idx + 1]
+        except ValueError:
+            pass
+
+    return OrderTrackingResponse(
+        purchase_order_id=po.purchase_order_id,
+        tracking_status=current_status,
+        expected_delivery_date=po.expected_delivery_date,
+        tracking_updated_at=po.tracking_updated_at,
+        tracking_history=po.tracking_history,
+        valid_next_statuses=valid_next,
+        current_status=current_status,
+        completed_steps=completed_steps,
+        next_step=next_step
+    )
+
+def transition_tracking_status(purchase_order_id: str, new_status: str) -> OrderTrackingResponse:
+    po = get_purchase_order(purchase_order_id)
+    current_status = po.order_tracking_status
+    
+    if new_status not in VALID_TRANSITIONS.get(current_status, []):
+        raise HTTPException(status_code=400, detail=f"Invalid transition from {current_status} to {new_status}")
+    
+    now_iso = datetime.utcnow().isoformat() + "Z"
+    po.order_tracking_status = new_status
+    po.tracking_updated_at = now_iso
+    po.tracking_history.append(TrackingHistoryEvent(status=new_status, timestamp=now_iso))
+    
+    update_purchase_order(po)
+    return get_tracking_info(po)
 
 
 def generate_purchase_order_pdf(purchase_order_id: str) -> io.BytesIO:

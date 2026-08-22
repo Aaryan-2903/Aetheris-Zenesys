@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import List, Optional, Dict, Any
 
 class PredictionRequest(BaseModel):
     category: str = Field(..., description="Procurement category")
@@ -256,6 +256,24 @@ class ReturnAndRefundPolicy(BaseModel):
     restocking_fee_percentage: float
     non_returnable_conditions: str
 
+class TrackingHistoryEvent(BaseModel):
+    status: str
+    timestamp: str
+
+class OrderTrackingResponse(BaseModel):
+    purchase_order_id: str
+    tracking_status: str
+    expected_delivery_date: str
+    tracking_updated_at: str
+    tracking_history: List[TrackingHistoryEvent]
+    valid_next_statuses: List[str]
+    current_status: str
+    completed_steps: List[str]
+    next_step: Optional[str]
+
+class OrderTrackingUpdateRequest(BaseModel):
+    status: str
+
 class PurchaseOrderRequest(BaseModel):
     procurement_request_id: str
     vendor_id: str
@@ -298,6 +316,8 @@ class PurchaseOrderResponse(BaseModel):
     payment_status: str
     status: str
     order_tracking_status: str = "PENDING_PAYMENT"
+    tracking_updated_at: str
+    tracking_history: List[TrackingHistoryEvent] = []
     razorpay_order_id: Optional[str] = None
     razorpay_payment_id: Optional[str] = None
     created_at: str

@@ -73,7 +73,10 @@ def verify_payment(request: PaymentVerifyRequest):
         
     po.payment_status = "PAID"
     po.razorpay_payment_id = request.razorpay_payment_id
-    po.order_tracking_status = "PAYMENT_CONFIRMED"
     update_purchase_order(po)
+    
+    # Securely transition tracking status
+    from backend.services.purchase_order_service import transition_tracking_status
+    transition_tracking_status(po.purchase_order_id, "PAYMENT_CONFIRMED")
     
     return {"status": "success", "message": "Payment verified successfully"}
