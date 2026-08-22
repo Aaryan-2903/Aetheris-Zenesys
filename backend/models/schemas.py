@@ -140,3 +140,55 @@ class ContractResponse(BaseModel):
     vendor_accepted: bool
     created_at: str
     accepted_at: Optional[str] = None
+
+# --- Protection Layer Schemas ---
+
+class WarrantyPlan(BaseModel):
+    plan_id: str
+    plan_name: str
+    warranty_period_months: int
+    warranty_fee: float
+    coverage_description: str
+
+class WarrantyCreateRequest(BaseModel):
+    procurement_request_id: str
+    vendor_id: str
+    product_or_service: str
+    plan_id: str
+    warranty_start_date: str
+
+class WarrantyResponse(BaseModel):
+    warranty_id: str
+    procurement_request_id: str
+    vendor_id: str
+    product_or_service: str
+    plan_id: str
+    warranty_period_months: int
+    warranty_fee: float
+    warranty_start_date: str
+    warranty_expiry_date: str
+    status: str
+    coverage_description: str
+    claim_reference: Optional[str] = None
+
+class InsuranceCreateRequest(BaseModel):
+    procurement_request_id: str
+    vendor_id: str
+    provider: str
+    policy_number: str
+    coverage_amount: float = Field(..., ge=0.0)
+    start_date: str
+    expiry_date: str
+    coverage_description: str
+
+class InsuranceResponse(BaseModel):
+    insurance_id: str
+    procurement_request_id: str
+    vendor_id: str
+    provider: str
+    policy_number: str
+    coverage_amount: float
+    start_date: str
+    expiry_date: str
+    status: str
+    coverage_description: str
