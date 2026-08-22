@@ -1,0 +1,14 @@
+[
+  "category",
+  "unit_price",
+  "quantity",
+  "total_order_value",
+  "lead_time_days",
+  "historical_on_time_rate",
+  "historical_quality_score",
+  "payment_terms_days",
+  "advance_payment_pct",
+  "order_complexity",
+  "vendor_transaction_count",
+  "vendor_defect_rate"
+]

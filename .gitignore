@@ -8,8 +8,6 @@ venv/
 
 # ML artifacts — keep scripts tracked, exclude large generated files
 backend/ml/data/
-backend/ml/model.joblib
-backend/ml/feature_columns.json
 
 # Node
 node_modules/
