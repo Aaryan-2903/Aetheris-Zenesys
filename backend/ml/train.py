@@ -85,10 +85,14 @@ TARGET = "outcome"
 # Columns that must NEVER appear in the feature matrix
 FORBIDDEN_FEATURES = {"transaction_id", "vendor_id", "transaction_date", TARGET}
 
-# Random Forest baseline parameters — not aggressively tuned; intent is a genuine baseline
+# Random Forest parameters — sized for hackathon deployment.
+# n_estimators=100 and max_depth=20 give a valid, stable baseline while keeping
+# the serialised artifact well below GitHub's 100 MiB single-file limit.
+# These are not chosen to hit a specific accuracy; they represent a reasonable
+# trade-off between model capacity and serialisation size.
 RF_PARAMS = {
-    "n_estimators": 200,       # enough trees for stable estimates without overfitting
-    "max_depth": None,         # let trees grow fully at baseline
+    "n_estimators": 100,       # reduced from 200 to shrink serialised tree storage
+    "max_depth": 20,           # depth cap: bounds node count per tree significantly
     "min_samples_split": 10,   # mild regularisation to avoid single-sample splits
     "min_samples_leaf": 5,     # mild regularisation on leaf size
     "max_features": "sqrt",    # standard classification default
@@ -231,7 +235,9 @@ def train_and_evaluate(df: pd.DataFrame) -> dict:
 def save_artifacts(pipeline: Pipeline) -> None:
     """
     Saves:
-      model.joblib            — full fitted pipeline (preprocessor + classifier)
+      model.joblib            — full fitted pipeline (preprocessor + classifier),
+                                serialised with zlib compression level 3 to reduce
+                                file size without affecting inference correctness.
       feature_columns.json    — ordered list of input feature names expected at inference
 
     At inference time the backend must:
@@ -240,8 +246,12 @@ def save_artifacts(pipeline: Pipeline) -> None:
       3. Construct a DataFrame with exactly those columns in that order
       4. Call pipeline.predict() / pipeline.predict_proba()
     """
-    joblib.dump(pipeline, MODEL_PATH)
+    # compress=3: zlib level 3 — good size reduction, fast enough for a deploy artifact
+    joblib.dump(pipeline, MODEL_PATH, compress=3)
+    size_bytes = os.path.getsize(MODEL_PATH)
+    size_mib = size_bytes / (1024 * 1024)
     print(f"\nModel saved   -> {MODEL_PATH}")
+    print(f"Model size    -> {size_bytes:,} bytes  ({size_mib:.2f} MiB)")
 
     with open(FEATURE_COLUMNS_PATH, "w", encoding="utf-8") as f:
         json.dump(ALL_FEATURES, f, indent=2)
