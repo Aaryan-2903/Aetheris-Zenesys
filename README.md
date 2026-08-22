@@ -1,151 +1,179 @@
 # ProcuraIQ
 
-ProcuraIQ turns vendor comparison into a predictive, priority-aware, and explainable procurement decision.
+> AI-Assisted Procurement Decision Intelligence Platform
 
-## Problem
-Procurement decisions are often based on simple price comparisons or gut feelings rather than data. Vendor performance history is ignored, risk is not quantified until something goes wrong, and financial exposure is hidden.
+ProcuraIQ helps organizations choose the right vendor—not simply the cheapest vendor—by combining ML prediction, requirement-aware scoring, supplier risk, financial exposure, contractual protection, payment execution, and post-purchase vendor intelligence.
 
-## Solution
-ProcuraIQ is a Procurement Decision Intelligence Platform that leverages Machine Learning and deterministic risk/financial engines to evaluate vendors. It predicts delivery success, ranks vendors based on custom business priorities, assesses multi-dimensional risk, and calculates actual money at risk before any commitment is made.
+---
 
-## Why ProcuraIQ
-Instead of just showing who is cheapest, ProcuraIQ shows who is most likely to deliver on time, calculates the true cost of risk, and provides explainable insights to justify procurement decisions. 
+## 🎯 The Problem
 
-## Core Decision Flow
-Predict → Prioritize → Assess Risk → Explain → Decide
+Traditional procurement decisions often rely on:
+- Price comparison
+- Static vendor ratings
+- Manual vendor evaluation
+- Limited visibility into supplier risk
+- Poor visibility into financial exposure
+- Difficulty explaining why a vendor was selected
 
-## Key Features
-- **ML Delivery Prediction**: Predicts the probability of a successful procurement outcome using a Random Forest model trained on historical transactions.
-- **Requirement-Aware Scoring**: Deterministically ranks vendors based on customized weights (delivery, quality, price, lead time, payment terms).
-- **Multi-Dimensional Risk Intelligence**: Analyzes delivery, quality, supplier concentration, and payment risks.
-- **Money At Risk (In Progress)**: Translates abstract risk scores into quantified financial exposure.
-- **Explainable Decisions (In Progress)**: Provides transparent reasoning for why a vendor is recommended or flagged.
+Cheapest vendor does not necessarily mean best vendor.
 
-## Current Implementation
-The backend foundation is established and tested.
+ProcuraIQ addresses this by combining prediction, business priorities, risk, financial exposure, protection, payment, and post-purchase intelligence into a single, cohesive platform.
 
-- **Completed**:
-  - Comprehensive documentation foundation (9 documents)
-  - 50,000 synthetic procurement transactions across 30 vendors and 10 categories
-  - Dataset validation and historical feature leakage safeguards
-  - Random Forest procurement outcome model (`model.joblib`)
-  - FastAPI backend foundation
-  - Supabase / PostgreSQL schema
-  - ML prediction API endpoint
-  - Requirement-aware deterministic vendor scoring engine
-  - Deterministic risk assessment engine
+---
 
-- **Verified API Functionality**:
-  - `GET /api/health`: HTTP 200 `{"status":"ok"}`
-  - `POST /api/predict/`: HTTP 200 (Real model inference using `model.joblib`, verified confidence around 0.7863)
-  - `POST /api/score/`: HTTP 200 (Returns ranked vendors, component scores, and deterministic final scores)
-  - `POST /api/risk/`: HTTP 200 (Returns delivery, quality, supplier, payment, and overall risk, plus supplier health score and low-confidence indicator)
+## 💡 The Solution
 
-## Architecture
-```text
-React + Vite
-        ↓
-FastAPI
-        ↓
-Business Logic + ML
-        ↓
-Supabase / PostgreSQL
-```
+The core decision flow of ProcuraIQ is:
 
-## ML Pipeline
-- **Algorithm**: Random Forest Classifier (Scikit-learn, Joblib)
-- **Dataset**: 50,000 synthetic procurement transactions
-- **Target**: On-time/successful procurement outcome (0 or 1)
-- **Features**: Historical vendor performance features derived strictly from prior transactions to prevent target leakage.
+**Predict → Prioritize → Assess Risk → Explain → Decide**
 
-## Dataset
-The generated 50,000-row dataset has passed rigorous validation, including structural, uniqueness, null, numeric-range, calculation-integrity, categorical, class-balance, chronological-order, and historical-feature consistency checks.
+The product is evolving into a complete procurement lifecycle platform that covers:
+Requirement → Vendor Intelligence → Prediction → Scoring → Risk → Protection → Purchase → Payment → Delivery → Feedback → Vendor Intelligence
 
-## Risk Intelligence
-The deterministic risk engine evaluates:
-- **Delivery Risk**: Based on historical on-time delivery rates.
-- **Quality Risk**: Based on defect rates and average quality scores.
-- **Supplier Concentration Risk**: Evaluates vendor spend vs total category spend.
-- **Payment / Advance Risk**: Calculates risk based on advance payment percentage and historical reliability.
+---
 
-## Money At Risk
+## ⭐ KEY USPs
+
+### 1. Predictive Vendor Intelligence
+A Random Forest model predicts the procurement outcome (success/failure) using structured procurement data and historical vendor features. The model is trained to ensure no target-derived feature leakage.
+
+### 2. Requirement-Aware Vendor Ranking
+Vendor ranking adapts to specific procurement priorities, including:
+- Delivery
+- Quality
+- Price
+- Lead time
+- Payment terms
+
+The scoring engine evaluates vendors based on these priorities, ensuring that the same inputs deterministically produce consistent rankings.
+
+### 3. Multi-Dimensional Risk Intelligence
+Risk is comprehensively evaluated and broken down into distinct components:
+- Delivery Risk
+- Quality Risk
+- Supplier Risk
+- Payment Risk
+
+The risk assessment also provides an Overall Risk score, a Supplier Health Score, and flags instances of low-confidence when insufficient historical data is present.
+
+### 4. Money At Risk
 *Status: IN PROGRESS*
-This engine will translate risk into financial exposure across five components:
+
+ProcuraIQ translates procurement risk into financial exposure. This helps decision-makers understand not only which vendor to choose, but how much money is potentially at stake. 
+
+Planned financial exposure components include:
 - Price Risk
 - Supplier Risk
 - Payment / Advance Risk
 - Delivery Risk
 - Quality Risk
 
-## Technology Stack
-- **Frontend**: React, Vite (In Progress)
-- **Backend**: FastAPI, Python
-- **Machine Learning**: Scikit-learn, Pandas, NumPy
-- **Database**: Supabase / PostgreSQL
+### 5. Contract & Procurement Protection
+*Status: PLANNED*
 
-## Project Structure
-```text
-backend/
-├── db/             # Database connection and queries
-├── ml/             # ML models, training scripts, and dataset generation
-├── models/         # Pydantic schemas for API validation
-├── routers/        # FastAPI route definitions (predict, score, risk, etc.)
-├── services/       # Core business logic and deterministic engines
-└── main.py         # FastAPI application entry point
-docs/               # Project specifications and rules
+Based on mentor feedback, the product roadmap incorporates critical protection measures:
+- Agreements
+- Terms and Conditions
+- Buyer obligations
+- Vendor obligations
+- Code of Conduct
+- Warranty
+- Insurance
+
+### 6. Payment & Procurement Execution
+*Status: PLANNED*
+
+The roadmap extends into the execution phase:
+Vendor Selection → Contract Acceptance → Purchase Order → Payment → Order Confirmation
+
+Payment gateway integration is targeted for Razorpay Test Mode.
+
+### 7. Post-Purchase Vendor Intelligence
+*Status: PLANNED*
+
+The procurement loop closes with post-purchase intelligence:
+- Buyer Feedback
+- Warranty Claims
+- Repeat Ratio
+- Historical vendor intelligence
+
+*Note on Repeat Ratio:* Calculated as Repeat Orders / Total Orders. This is utilized as a behavioral and relationship signal, though it is not automatically treated as definitive proof of satisfaction.
+
+---
+
+## 🔄 COMPLETE PROCUREMENT LIFECYCLE
+
+```mermaid
+flowchart TD
+    A[Procurement Requirement] --> B[Vendor Intelligence]
+    B --> C[ML Prediction]
+    B --> D[Requirement-Aware Scoring]
+    B --> E[Risk Assessment]
+
+    C --> F[Procurement Decision]
+    D --> F
+    E --> F
+
+    F --> G[Contract / Agreement]
+    G --> H[Warranty + Insurance]
+    H --> I[Purchase Order]
+    I --> J[Payment Gateway]
+    J --> K[Order Confirmed]
+    K --> L[Delivery]
+    L --> M[Buyer Feedback]
+    M --> N[Repeat Ratio]
+    N --> B
 ```
 
-## API Endpoints
-- `GET /api/health` - Health check
-- `POST /api/predict/` - ML procurement outcome prediction
-- `POST /api/score/` - Deterministic vendor scoring and ranking
-- `POST /api/risk/` - Deterministic risk assessment
+---
 
-## Current Status
-### COMPLETED
-- Dataset generation and validation
-- ML training pipeline and artifact creation
-- FastAPI foundation
-- ML prediction endpoint
-- Scoring engine
-- Risk engine
-- Supabase schema
+## 🏗️ Architecture & Technology Stack
+
+```text
+React + Vite (Planned)
+        ↓
+FastAPI (Completed)
+        ↓
+Business Logic + ML (Completed)
+        ↓
+Supabase / PostgreSQL (Completed)
+```
+
+- **Frontend**: React, Vite *(In Progress)*
+- **Backend**: FastAPI, Python *(Completed)*
+- **Machine Learning**: Scikit-learn, Pandas, NumPy *(Completed)*
+- **Database**: Supabase / PostgreSQL *(Completed)*
+
+---
+
+## 📊 Current Implementation Status
+
+### COMPLETED & VERIFIED
+- **Documentation**: Comprehensive foundation (9 documents)
+- **Dataset**: 50,000 synthetic procurement transactions across 30 vendors and 10 categories (validated with historical feature leakage safeguards)
+- **ML Artifacts**: Random Forest procurement outcome model (`model.joblib`), `feature_columns.json`
+- **Backend**: FastAPI foundation with Supabase / PostgreSQL schema
+- **API Endpoints**:
+  - `GET /api/health` - System health check (HTTP 200 verified)
+  - `POST /api/predict/` - Real model inference using `model.joblib` (HTTP 200 verified)
+  - `POST /api/score/` - Deterministic vendor scoring and ranking (HTTP 200 verified)
+  - `POST /api/risk/` - Deterministic multi-dimensional risk assessment engine (HTTP 200 verified across strong, medium, and weak vendor profiles)
 
 ### IN PROGRESS
 - Money At Risk / Financial Exposure Engine
 - Final Decision Engine
 - Supabase backend data integration
-- Frontend (React + Vite)
-- Frontend ↔ API integration
-- Deployment
-- End-to-end testing
+- Frontend (React + Vite) and API integration
+- End-to-end testing and Deployment
 
-## Roadmap
-1. Procurement Requirement
-2. Vendor Comparison
-3. ML Prediction *(Completed)*
-4. Requirement-Aware Scoring *(Completed)*
-5. Risk Assessment *(Completed)*
-6. Money At Risk *(In Progress)*
-7. Protection Actions *(Planned)*
-8. Explainable Final Decision *(Planned)*
+---
 
-## Demo / Screenshots
-*(Planned for Frontend Completion)*
+## 🚀 Local Setup
 
-## Local Setup
 1. Clone the repository.
 2. Install dependencies: `pip install -r backend/requirements.txt`
-3. Run the backend: `uvicorn backend.main:app --reload`
-4. Run tests: `python test_risk.py` or `python test_score.py`
+3. Run the backend locally: `uvicorn backend.main:app --reload`
+4. Run verification tests: `python test_score.py` or `python test_risk.py`
 
-## Environment Variables
-The project uses local environment variables for configuration. See `.env.example` for the required keys. Do not expose actual credentials.
-
-## Security
-- All sensitive credentials must remain in `.env` (not committed to version control).
-- No actual enterprise data is currently used; all transactions are strictly synthetic.
-- `model.joblib` does not contain sensitive customer information.
-
-## Team / Credits
-Built for the Hackathon.
+*Note: The project requires local environment variables for configuration. See `.env.example`. Never commit actual credentials to version control.*
