@@ -1,10 +1,25 @@
 """
 ProcuraIQ — Dataset Validation & Relationship Report
 =====================================================
+Version: 1.1
+
 Validates procurement_transactions.csv against all data integrity rules
 defined in docs/rules.md and docs/techspec.md.
 
 Produces a concise pass/fail report and key relationship statistics.
+
+Validation scope and limitations
+---------------------------------
+This script performs structural, numeric-range, chronological, and
+logical-consistency checks that can be independently verified from the CSV.
+
+Point-in-time integrity (historical features computed from prior transactions
+only) is guaranteed by generate_data.py's chronological generation logic and
+the per-vendor rolling accumulator pattern. The validator confirms observable
+proxies for this property (vendor_transaction_count starts at 0 per vendor,
+is non-decreasing per vendor, and the dataset is chronologically ordered) but
+cannot re-derive what each row's historical values were from the CSV alone.
+That guarantee must be audited in generate_data.py.
 
 DO NOT manipulate the dataset based on these results to improve ML accuracy.
 If relationships look wrong, fix generate_data.py and regenerate.
@@ -81,10 +96,10 @@ def run_validation(rows: List[dict]) -> int:
             failures += 1
             return failures  # can't continue without columns
 
-    # Row count
+    # Row count — must be exactly 50,000
     n = len(rows)
-    ok = 45_000 <= n <= 55_000
-    if not pf(ok, f"Row count ~50,000", f"actual={n:,}"):
+    ok = (n == 50_000)
+    if not pf(ok, "Row count is exactly 50,000", f"actual={n:,}"):
         failures += 1
 
     section("2. UNIQUENESS AND NULLS")
@@ -110,12 +125,15 @@ def run_validation(rows: List[dict]) -> int:
 
     neg_price = neg_qty = neg_tov = 0
     bad_otr = bad_qs = bad_dr = bad_adv = bad_comp = bad_outcome = 0
+    bad_lead = bad_pay_terms = 0
 
     for r in rows:
         try:
             up = float(r["unit_price"])
             qty = int(r["quantity"])
             tov = float(r["total_order_value"])
+            lead = int(r["lead_time_days"])
+            pay_terms = int(r["payment_terms_days"])
             otr = float(r["historical_on_time_rate"])
             qs = float(r["historical_quality_score"])
             dr = float(r["vendor_defect_rate"])
@@ -125,21 +143,27 @@ def run_validation(rows: List[dict]) -> int:
         except (ValueError, KeyError):
             continue
 
-        if up <= 0:         neg_price += 1
-        if qty <= 0:        neg_qty += 1
-        if tov <= 0:        neg_tov += 1
-        if not 0.0 <= otr <= 1.0: bad_otr += 1
-        if not 0.0 <= qs <= 1.0:  bad_qs += 1
-        if not 0.0 <= dr <= 1.0:  bad_dr += 1
-        if not 0.0 <= adv <= 1.0: bad_adv += 1
+        if up <= 0:              neg_price += 1
+        if qty <= 0:             neg_qty += 1
+        if tov <= 0:             neg_tov += 1
+        if lead <= 0:            bad_lead += 1
+        if pay_terms < 0:        bad_pay_terms += 1
+        if not 0.0 <= otr <= 1.0:  bad_otr += 1
+        if not 0.0 <= qs <= 1.0:   bad_qs += 1
+        if not 0.0 <= dr <= 1.0:   bad_dr += 1
+        if not 0.0 <= adv <= 1.0:  bad_adv += 1
         if not 0.0 <= comp <= 1.0: bad_comp += 1
-        if out not in (0, 1):     bad_outcome += 1
+        if out not in (0, 1):      bad_outcome += 1
 
     if not pf(neg_price == 0, "All unit_prices > 0", f"{neg_price} violations"):
         failures += 1
     if not pf(neg_qty == 0, "All quantities > 0", f"{neg_qty} violations"):
         failures += 1
     if not pf(neg_tov == 0, "All total_order_values > 0", f"{neg_tov} violations"):
+        failures += 1
+    if not pf(bad_lead == 0, "lead_time_days > 0", f"{bad_lead} violations"):
+        failures += 1
+    if not pf(bad_pay_terms == 0, "payment_terms_days >= 0", f"{bad_pay_terms} violations"):
         failures += 1
     if not pf(bad_otr == 0, "historical_on_time_rate in [0,1]", f"{bad_otr} violations"):
         failures += 1
@@ -178,7 +202,7 @@ def run_validation(rows: List[dict]) -> int:
         failures += 1
 
     vendor_ids = {r["vendor_id"] for r in rows}
-    if not pf(20 <= len(vendor_ids) <= 35, f"Vendor count in expected range",
+    if not pf(len(vendor_ids) == 30, "Exactly 30 unique vendor IDs",
               f"actual={len(vendor_ids)}"):
         failures += 1
 
@@ -210,26 +234,42 @@ def run_validation(rows: List[dict]) -> int:
 
     section("8. HISTORICAL FEATURE CONSISTENCY")
 
-    # vendor_transaction_count must be non-negative and non-decreasing per vendor
+    print()
+    print("  Scope note: Point-in-time integrity (historical features computed from")
+    print("  prior transactions only) is guaranteed by generate_data.py's chrono-")
+    print("  logical generation logic. This section validates observable proxies:")
+    print("  vendor_transaction_count monotonicity and cold-start value. Full leakage")
+    print("  proof is not independently derivable from the exported CSV alone.")
+
+    # vendor_transaction_count must be non-negative and non-decreasing per vendor,
+    # in the order the rows appear (which is chronological order).
     vendor_txn_counts: Dict[str, int] = {}
     count_inconsistencies = 0
+    negative_counts = 0
     for r in rows:
         vid = r["vendor_id"]
         try:
             cnt = int(r["vendor_transaction_count"])
         except (ValueError, KeyError):
             continue
+        if cnt < 0:
+            negative_counts += 1
         if vid in vendor_txn_counts:
             if cnt < vendor_txn_counts[vid]:
                 count_inconsistencies += 1
         vendor_txn_counts[vid] = cnt
 
+    if not pf(negative_counts == 0,
+              "vendor_transaction_count is non-negative throughout",
+              f"{negative_counts} violations"):
+        failures += 1
     if not pf(count_inconsistencies == 0,
-              "vendor_transaction_count is non-decreasing per vendor",
+              "vendor_transaction_count is non-decreasing per vendor (chronological)",
               f"{count_inconsistencies} violations"):
         failures += 1
 
-    # First transactions for each vendor must have vendor_transaction_count == 0
+    # First transaction per vendor must have vendor_transaction_count == 0
+    # (cold-start: no prior history exists for that vendor yet)
     first_seen: Dict[str, bool] = {}
     cold_start_errors = 0
     for r in rows:
@@ -244,8 +284,28 @@ def run_validation(rows: List[dict]) -> int:
                 cold_start_errors += 1
 
     if not pf(cold_start_errors == 0,
-              "First transaction per vendor has vendor_transaction_count=0",
+              "First transaction per vendor has vendor_transaction_count=0 (cold-start)",
               f"{cold_start_errors} violations"):
+        failures += 1
+
+    # historical_on_time_rate and historical_quality_score must be in [0,1].
+    # (Already checked in Section 3; confirmed here as a targeted re-assertion
+    # in the historical-integrity context.)
+    bad_hist_otr = sum(
+        1 for r in rows
+        if not (0.0 <= float(r.get("historical_on_time_rate", -1)) <= 1.0)
+    )
+    bad_hist_qs = sum(
+        1 for r in rows
+        if not (0.0 <= float(r.get("historical_quality_score", -1)) <= 1.0)
+    )
+    if not pf(bad_hist_otr == 0,
+              "historical_on_time_rate in [0,1] (historical integrity re-check)",
+              f"{bad_hist_otr} violations"):
+        failures += 1
+    if not pf(bad_hist_qs == 0,
+              "historical_quality_score in [0,1] (historical integrity re-check)",
+              f"{bad_hist_qs} violations"):
         failures += 1
 
     return failures
@@ -347,7 +407,7 @@ if __name__ == "__main__":
 
     section("VALIDATION SUMMARY")
     if failures == 0:
-        print("\n  ALL CHECKS PASSED. Dataset is ready for ML training.")
+        print("\n  ALL CHECKS PASSED. Dataset is validated and ready for ML evaluation.")
     else:
         print(f"\n  {failures} CHECK(S) FAILED. Fix generate_data.py and regenerate.")
 
