@@ -21,3 +21,5 @@ build/
 Thumbs.db
 
 .venv/
+
+auth.db
