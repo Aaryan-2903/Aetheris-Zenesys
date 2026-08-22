@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routers import predict, vendors, procurement, risk, financial, score, contracts, warranty, insurance, repeat_ratio
+from backend.routers import predict, vendors, procurement, risk, financial, score, contracts, warranty, insurance, repeat_ratio, feedback
 
 app = FastAPI(title="ProcuraIQ API", version="1.0.0")
 
@@ -24,6 +24,7 @@ app.include_router(contracts.router, prefix="/api/contracts", tags=["Contracts"]
 app.include_router(warranty.router, prefix="/api/warranty", tags=["Warranty"])
 app.include_router(insurance.router, prefix="/api/insurance", tags=["Insurance"])
 app.include_router(repeat_ratio.router, prefix="/api/repeat-ratio", tags=["Vendor Intelligence"])
+app.include_router(feedback.router, prefix="/api/feedback", tags=["Feedback"])
 
 @app.get("/api/health")
 def health_check():

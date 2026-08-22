@@ -206,3 +206,33 @@ class RepeatRatioResponse(BaseModel):
     repeat_orders: int
     order_repeat_ratio: float = Field(..., ge=0.0, le=100.0, description="Repeat Ratio percentage")
     interpretation: str
+
+# --- Buyer Feedback Schemas ---
+
+class BuyerFeedbackRequest(BaseModel):
+    order_id: str
+    vendor_id: str
+    overall_rating: int = Field(..., ge=1, le=5)
+    quality_rating: int = Field(..., ge=1, le=5)
+    delivery_rating: int = Field(..., ge=1, le=5)
+    responsiveness_rating: int = Field(..., ge=1, le=5)
+    comments: Optional[str] = Field(None, max_length=1000)
+
+class BuyerFeedbackResponse(BaseModel):
+    feedback_id: str
+    order_id: str
+    vendor_id: str
+    overall_rating: int
+    quality_rating: int
+    delivery_rating: int
+    responsiveness_rating: int
+    comments: Optional[str] = None
+    created_at: str
+
+class VendorFeedbackSummary(BaseModel):
+    vendor_id: str
+    feedback_count: int
+    average_overall_rating: float
+    average_quality_rating: float
+    average_delivery_rating: float
+    average_responsiveness_rating: float
