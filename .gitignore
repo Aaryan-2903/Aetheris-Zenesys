@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.env
+*.egg-info/
+
+# ML artifacts — keep scripts tracked, exclude large generated files
+backend/ml/data/
+backend/ml/model.joblib
+backend/ml/feature_columns.json
+
+# Node
+node_modules/
+
+# Build output
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
