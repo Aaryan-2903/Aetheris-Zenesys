@@ -18,3 +18,41 @@ class PredictionRequest(BaseModel):
 class PredictionResponse(BaseModel):
     predicted_outcome: int = Field(..., description="1 (on-time, successful delivery) or 0 (late or failed delivery)")
     confidence_score: float = Field(..., description="Probability of success (0.0 to 1.0)")
+
+# --- Scoring Engine Schemas ---
+
+class ScoringWeights(BaseModel):
+    weight_delivery: float = Field(0.25, description="Weight for delivery reliability")
+    weight_quality: float = Field(0.25, description="Weight for quality")
+    weight_price: float = Field(0.20, description="Weight for price competitiveness")
+    weight_lead_time: float = Field(0.15, description="Weight for lead time")
+    weight_payment: float = Field(0.15, description="Weight for payment terms")
+
+class VendorScoreRequestItem(BaseModel):
+    vendor_id: str = Field(..., description="Unique vendor identifier")
+    on_time_delivery_rate: float = Field(..., description="Historical on-time delivery rate (0-1)")
+    avg_quality_score: float = Field(..., description="Historical average quality score (0-1)")
+    vendor_price: float = Field(..., description="Offered price per unit")
+    actual_lead_time: int = Field(..., description="Offered lead time in days")
+    payment_terms_days: int = Field(..., description="Offered payment terms in days")
+
+class ProcurementScoringRequest(BaseModel):
+    budget_per_unit: float = Field(..., description="Target budget per unit")
+    required_lead_time: int = Field(..., description="Required lead time in days")
+    vendors: List[VendorScoreRequestItem] = Field(..., description="List of vendors to score and rank")
+    weights: Optional[ScoringWeights] = Field(None, description="Custom weights (defaults will be used if omitted)")
+
+class VendorScoreComponents(BaseModel):
+    delivery_score: float
+    quality_score: float
+    price_score: float
+    lead_time_score: float
+    payment_score: float
+
+class VendorScoreResponseItem(BaseModel):
+    vendor_id: str
+    final_score: float = Field(..., description="Deterministic composite score (0-1)")
+    components: VendorScoreComponents
+
+class ProcurementScoringResponse(BaseModel):
+    ranked_vendors: List[VendorScoreResponseItem] = Field(..., description="Vendors ranked by final_score descending")
