@@ -106,3 +106,37 @@ class FinancialExposureResponse(BaseModel):
     total_money_at_risk: float
     exposure_percentage: float = Field(..., description="total_money_at_risk / purchase_value")
     is_low_confidence_price: bool = Field(..., description="True if < 5 transactions or zero avg price")
+
+# --- Contract Engine Schemas ---
+
+class ContractCreateRequest(BaseModel):
+    procurement_request_id: str
+    vendor_id: str
+    buyer_terms: str
+    vendor_terms: str
+    payment_terms: str
+    delivery_terms: str
+    warranty_terms: str
+    return_replacement_terms: str
+    compliance_requirements: str
+    buyer_code_of_conduct: str
+    vendor_code_of_conduct: str
+
+class ContractResponse(BaseModel):
+    contract_id: str
+    procurement_request_id: str
+    vendor_id: str
+    buyer_terms: str
+    vendor_terms: str
+    payment_terms: str
+    delivery_terms: str
+    warranty_terms: str
+    return_replacement_terms: str
+    compliance_requirements: str
+    buyer_code_of_conduct: str
+    vendor_code_of_conduct: str
+    status: str
+    buyer_accepted: bool
+    vendor_accepted: bool
+    created_at: str
+    accepted_at: Optional[str] = None
