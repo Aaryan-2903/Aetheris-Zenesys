@@ -82,3 +82,27 @@ class RiskAssessmentResponse(BaseModel):
     overall_risk: RiskComponent
     supplier_health_score: float = Field(..., description="Deterministic supplier health score (0-1)")
     is_low_confidence: bool = Field(False, description="Flagged if < 5 transactions or zero category spend")
+
+# --- Financial Exposure Schemas ---
+
+class FinancialExposureRequest(BaseModel):
+    purchase_value: float = Field(..., ge=0.0)
+    advance_payment_pct: float = Field(..., ge=0.0, le=1.0)
+    historical_price_stddev: float = Field(..., ge=0.0)
+    historical_avg_price: float = Field(..., ge=0.0)
+    transaction_count: int = Field(..., ge=0)
+    supplier_health_score: float = Field(..., ge=0.0, le=1.0)
+    payment_risk_score: float = Field(..., ge=0.0, le=1.0)
+    delivery_risk_score: float = Field(..., ge=0.0, le=1.0)
+    quality_risk_score: float = Field(..., ge=0.0, le=1.0)
+
+class FinancialExposureResponse(BaseModel):
+    purchase_value: float
+    price_risk_exposure: float
+    supplier_risk_exposure: float
+    payment_risk_exposure: float
+    delivery_risk_exposure: float
+    quality_risk_exposure: float
+    total_money_at_risk: float
+    exposure_percentage: float = Field(..., description="total_money_at_risk / purchase_value")
+    is_low_confidence_price: bool = Field(..., description="True if < 5 transactions or zero avg price")
