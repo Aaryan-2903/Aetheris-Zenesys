@@ -1,10 +1,13 @@
 """
 ProcuraIQ — Synthetic Procurement Dataset Generator
 ====================================================
+Version: 1.1 (fixes: lead-time condition ordering, complexity condition ordering,
+         explicit same-date sequence key for point-in-time integrity)
+
 Generates ~50,000 synthetic procurement transactions with:
   - Point-in-time historical features (no future leakage)
   - Realistic relationships between variables and outcome
-  - Chronological ordering
+  - Deterministic chronological ordering (date + intra-day sequence key)
   - Reproducible output via fixed random seed
 
 Output: backend/ml/data/procurement_transactions.csv
@@ -304,18 +307,23 @@ def compute_outcome_probability(
     hist_otr = hist.on_time_rate()
     p = 0.50 * p + 0.50 * hist_otr  # blend latent + observable history
 
-    # Lead time pressure: the longer relative to category max, the more risky
+    # Lead time pressure: the longer relative to category max, the more risky.
+    # FIX: check >1.0 (stronger penalty) BEFORE >0.80 (normal penalty) so the
+    # more-specific branch is reachable.
     lead_ratio = lead_time_days / max(category_lead_max, 1)
-    if lead_ratio > 0.80:
-        p *= 0.90
-    elif lead_ratio > 1.0:   # promised > category max (unusual order)
+    if lead_ratio > 1.0:     # promised lead time exceeds category maximum (unusual order)
         p *= 0.82
+    elif lead_ratio > 0.80:  # within category max but in the high-pressure zone
+        p *= 0.90
 
-    # Order complexity increases failure risk
-    if order_complexity > 0.70:
+    # Order complexity increases failure risk.
+    # FIX: check very-high complexity (>0.85) BEFORE moderate-high (>0.70) so the
+    # more-specific branch is reachable.
+    if order_complexity > 0.85:
+        p *= 0.84            # strong penalty for very high complexity
+    elif order_complexity > 0.70:
+        # Graduated penalty: scales from 0% at 0.70 to ~12% at 1.0
         p *= (1.0 - 0.12 * ((order_complexity - 0.70) / 0.30))
-    elif order_complexity > 0.85:
-        p *= 0.84
 
     # High advance payment signals financial strain / new relationship risk
     if advance_payment_pct > 0.30:
@@ -443,6 +451,13 @@ def generate_dataset(n_rows: int = TARGET_ROWS) -> List[dict]:
     """
     Generate n_rows transactions in chronological order.
     Historical features are always derived from prior transactions only.
+
+    Same-date ordering:
+    Each transaction is assigned (date, sequence_key). sequence_key is a
+    random integer drawn before sorting, which provides a stable, deterministic
+    sub-order within any given date. Transactions are sorted by (date, key).
+    This ensures that two transactions on the same date always process in the
+    same order across re-runs, preserving point-in-time integrity.
     """
     print(f"Generating {n_rows:,} transactions (seed={RANDOM_SEED})...")
 
@@ -451,18 +466,19 @@ def generate_dataset(n_rows: int = TARGET_ROWS) -> List[dict]:
         v.vendor_id: VendorHistory() for v in VENDORS
     }
 
-    # Build a weighted schedule: each day draws transactions proportionally
-    # We need exactly n_rows rows spread over TOTAL_DAYS days
     rows: List[dict] = []
 
-    # Pre-assign each transaction a date uniformly across the window, then sort
-    dates = sorted(
-        START_DATE + timedelta(days=random.randint(0, TOTAL_DAYS))
+    # Pre-assign each transaction a (date, intra-day sequence key) then sort.
+    # The sequence key is drawn from the seeded RNG so the order is reproducible.
+    # Using a large int range keeps collisions negligible.
+    date_keys = sorted(
+        (START_DATE + timedelta(days=random.randint(0, TOTAL_DAYS)),
+         random.randint(0, 10_000_000))    # intra-day tiebreaker
         for _ in range(n_rows)
-    )
+    )  # sort is stable on (date, key) — fully deterministic
 
     txn_counter = 0
-    for txn_date in dates:
+    for txn_date, _seq_key in date_keys:
         txn_counter += 1
         txn_id = f"TXN-{txn_counter:06d}"
 
