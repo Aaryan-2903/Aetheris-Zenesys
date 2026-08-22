@@ -18,8 +18,7 @@ import { riskApi } from '../api/risk';
 import type { RiskAssessmentResponse } from '../api/risk';
 import { contractsApi } from '../api/contracts';
 import type { ContractResponse } from '../api/contracts';
-import { kpis as fallbackKpis } from '../data/procurementData';
-import { RefreshCw, AlertCircle, CheckCircle2, ShieldCheck, TrendingDown, DollarSign, Loader2 } from 'lucide-react';
+import { RefreshCw, AlertCircle, CheckCircle2, ShieldCheck, TrendingDown, DollarSign, Loader2, Check } from 'lucide-react';
 
 interface OutletContextType {
   searchQuery?: string;
@@ -34,16 +33,16 @@ export const DecisionCenter: React.FC = () => {
   const [modalState, setModalState] = useState<'none' | 'plan' | 'supplier' | 'negotiation' | 'contract_success'>('none');
   
   // Real backend evaluation states
-  const [loading, setLoading] = useState<boolean>(false);
+  const [evalState, setEvalState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [isLive, setIsLive] = useState<boolean>(false);
   const [errorNotice, setErrorNotice] = useState<string | null>(null);
 
   // Active Procurement State
-  const [activeRequest] = useState({
+  const defaultRequest = {
     vendor_id: "V-1002",
     vendor_name: "Apex Parts Intl.",
     category: "IT Hardware",
-    item_name: "Enterprise Server Infrastructure Upgrade",
+    item_name: "IT Hardware Procurement",
     unit_price: 125000.0,
     quantity: 5,
     lead_time_days: 14,
@@ -57,6 +56,18 @@ export const DecisionCenter: React.FC = () => {
     vendor_category_spend: 880000.0,
     total_category_spend: 2500000.0,
     historical_price_stddev: 5000.0
+  };
+
+  const [activeRequest, setActiveRequest] = useState(() => {
+    const saved = localStorage.getItem('procuraiq_active_procurement');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return defaultRequest;
+      }
+    }
+    return defaultRequest;
   });
 
   // Backend response models
@@ -76,7 +87,7 @@ export const DecisionCenter: React.FC = () => {
 
   // Re-evaluate Backend function
   const runBackendEvaluation = async (procurementContext = activeRequest) => {
-    setLoading(true);
+    setEvalState('loading');
     setErrorNotice(null);
     try {
       // 1. Evaluate Automation Decision
@@ -164,18 +175,37 @@ export const DecisionCenter: React.FC = () => {
       }
 
       setIsLive(true);
+      setEvalState('success');
       showToast("Backend evaluation updated with live procurement signals.");
+      setTimeout(() => setEvalState('idle'), 3000);
     } catch (err: any) {
       console.warn("Backend evaluation error:", err.message);
       setIsLive(false);
+      setEvalState('error');
       setErrorNotice("Backend unavailable — showing demo data");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
+    const handleProcurementUpdated = () => {
+      const saved = localStorage.getItem('procuraiq_active_procurement');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setActiveRequest(parsed);
+          runBackendEvaluation(parsed);
+        } catch {
+          runBackendEvaluation();
+        }
+      }
+    };
+
+    window.addEventListener('procurement_updated', handleProcurementUpdated);
     runBackendEvaluation();
+
+    return () => {
+      window.removeEventListener('procurement_updated', handleProcurementUpdated);
+    };
   }, []);
 
   // Handler for applying protection plan via backend contract service
@@ -199,7 +229,6 @@ export const DecisionCenter: React.FC = () => {
       setModalState('contract_success');
       showToast("Protection plan prepared successfully.");
     } catch (err: any) {
-      // If backend offline, show prepared confirmation without breaking
       setModalState('contract_success');
       showToast("Protection plan prepared successfully.");
     } finally {
@@ -210,12 +239,11 @@ export const DecisionCenter: React.FC = () => {
   // Dynamic Money at risk calculation
   const moneyAtRiskDisplay = financialRes
     ? `₹${(financialRes.total_money_at_risk / 100000).toFixed(1)}L`
-    : "₹3.2L";
+    : "₹5.2L";
 
   // Price delta calculations for negotiation
   const priceGap = activeRequest.unit_price - activeRequest.historical_avg_price;
   const priceGapPct = ((priceGap / activeRequest.historical_avg_price) * 100).toFixed(1);
-  const potentialSavingsVal = `₹${((priceGap * activeRequest.quantity) / 100000).toFixed(1)}L`;
 
   return (
     <>
@@ -224,11 +252,11 @@ export const DecisionCenter: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[11px] uppercase tracking-[0.08em] text-muted font-bold">
-              PROCUREMENT INTELLIGENCE
+              DECISION CENTER
             </span>
             {isLive ? (
               <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-green bg-greenbg px-2 py-0.5 rounded-full tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-green animate-pulse"></span> Live Backend Connected
+                <span className="w-1.5 h-1.5 rounded-full bg-green animate-pulse"></span> Live Backend
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-warning bg-warningbg px-2 py-0.5 rounded-full tracking-wider">
@@ -236,31 +264,37 @@ export const DecisionCenter: React.FC = () => {
               </span>
             )}
           </div>
-          <h1 className="text-[30px] md:text-[36px] tracking-[-0.035em] font-bold mt-1 mb-1 text-text">
+          <h1 className="text-[30px] md:text-[36px] tracking-[-0.035em] font-bold mt-1 mb-0.5 text-text">
             Decision Center
           </h1>
+          <p className="text-[#5f6673] text-[14px] md:text-[15px] max-w-3xl leading-relaxed">
+            From procurement signals to action — understand exposure, explain the decision, and act before value is lost.
+          </p>
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button 
-            variant="primary" 
+            variant={evalState === 'error' ? 'secondary' : 'primary'}
             onClick={() => runBackendEvaluation()} 
             className="w-full sm:w-auto text-xs px-4 py-2.5 flex items-center justify-center gap-2 font-semibold shadow-xs"
-            disabled={loading}
+            disabled={evalState === 'loading'}
           >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-            {loading ? 'Evaluating Model...' : 'Re-evaluate Backend'}
+            {evalState === 'loading' && <Loader2 size={14} className="animate-spin" />}
+            {evalState === 'success' && <Check size={14} className="text-white" />}
+            {evalState === 'idle' && <RefreshCw size={14} />}
+            {evalState === 'error' && <RefreshCw size={14} />}
+
+            {evalState === 'loading' && 'Evaluating...'}
+            {evalState === 'success' && 'Backend Evaluated ✓'}
+            {evalState === 'error' && 'Retry Evaluation'}
+            {evalState === 'idle' && 'Re-evaluate Backend'}
           </Button>
         </div>
       </div>
 
-      <p className="text-[#5f6673] text-[14px] md:text-[15px] mb-5 max-w-3xl leading-relaxed">
-        From procurement signals to action — understand exposure, explain the decision, and act before value is lost.
-      </p>
-
       {/* Backend notice if offline */}
       {errorNotice && (
-        <div className="mb-5 p-3.5 rounded-xl bg-[#fff7f6] border border-[#ffccc7] flex items-center justify-between text-xs text-[#b42318]">
+        <div className="my-4 p-3.5 rounded-xl bg-[#fff7f6] border border-[#ffccc7] flex items-center justify-between text-xs text-[#b42318]">
           <div className="flex items-center gap-2">
             <AlertCircle size={16} />
             <span><strong>Notice:</strong> {errorNotice}</span>
@@ -269,34 +303,34 @@ export const DecisionCenter: React.FC = () => {
             onClick={() => runBackendEvaluation()} 
             className="underline font-semibold hover:text-black ml-3 cursor-pointer"
           >
-            Retry Connection
+            Retry Evaluation
           </button>
         </div>
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-[18px] mb-[22px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-[18px] my-[22px]">
         <KPICard 
           label="Potential Savings" 
-          value={potentialSavingsVal !== "₹0.0L" ? potentialSavingsVal : fallbackKpis.potentialSavings} 
-          trend={fallbackKpis.potentialSavingsTrend} 
+          value="₹12.4M" 
+          trend="↑ 15.2% vs last quarter" 
           isPositive 
         />
         <KPICard 
           label="Realized Savings" 
-          value={fallbackKpis.realizedSavings} 
-          trend={fallbackKpis.realizedSavingsTrend} 
+          value="₹8.1M" 
+          trend="↑ 8.4% vs last quarter" 
           isPositive 
         />
         <KPICard 
-          label="Financial Exposure" 
+          label="Money At Risk" 
           value={moneyAtRiskDisplay} 
-          desc="Money At Risk (Live Calculated)"
+          desc="Calculated Financial Exposure"
           highlight
         />
         <KPICard 
           label="Active Decisions" 
-          value={fallbackKpis.activeDecisions.toString()} 
+          value="14" 
           desc={predictionRes ? `ML Confidence: ${(predictionRes.confidence_score * 100).toFixed(0)}%` : "4 require action today"} 
         />
       </div>
@@ -306,7 +340,7 @@ export const DecisionCenter: React.FC = () => {
         <DecisionCard 
           onApplyProtection={handleApplyProtectionPlan}
           onReviewSupplier={() => setModalState('supplier')}
-          requestName={`${activeRequest.category} Procurement — ${activeRequest.vendor_name}`}
+          requestName={activeRequest.item_name}
           supplierName={activeRequest.vendor_name}
           moneyAtRisk={moneyAtRiskDisplay}
           realData={{
@@ -319,6 +353,7 @@ export const DecisionCenter: React.FC = () => {
           <ProtectionPanel 
             onGeneratePlan={() => setModalState('negotiation')} 
             onApplyProtection={handleApplyProtectionPlan}
+            onReviewSupplier={() => setModalState('supplier')}
           />
           <IntegrationCard />
         </div>
@@ -434,7 +469,7 @@ export const DecisionCenter: React.FC = () => {
             <div>
               <b className="text-xs uppercase tracking-wider text-primary block mb-0.5">Target Financial Outcome</b>
               <p className="text-[13px] text-text font-medium">
-                Target Savings: <strong className="text-primary font-bold">{potentialSavingsVal}</strong> and zero unhedged advance risk.
+                Target Savings: <strong className="text-primary font-bold">₹75,000</strong> and zero unhedged advance risk.
               </p>
             </div>
           </div>
