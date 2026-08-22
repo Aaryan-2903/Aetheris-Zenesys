@@ -56,3 +56,29 @@ class VendorScoreResponseItem(BaseModel):
 
 class ProcurementScoringResponse(BaseModel):
     ranked_vendors: List[VendorScoreResponseItem] = Field(..., description="Vendors ranked by final_score descending")
+
+# --- Risk Engine Schemas ---
+
+class RiskAssessmentRequest(BaseModel):
+    vendor_id: str
+    on_time_delivery_rate: float = Field(..., ge=0.0, le=1.0)
+    defect_rate: float = Field(..., ge=0.0, le=1.0)
+    avg_quality_score: float = Field(..., ge=0.0, le=1.0)
+    vendor_category_spend: float = Field(..., ge=0.0)
+    total_category_spend: float = Field(..., ge=0.0)
+    advance_payment_pct: float = Field(..., ge=0.0, le=1.0)
+    transaction_count: int = Field(..., ge=0, description="Number of historical transactions")
+
+class RiskComponent(BaseModel):
+    score: float = Field(..., description="Calculated risk score")
+    label: str = Field(..., description="Risk label: Low, Medium, or High")
+
+class RiskAssessmentResponse(BaseModel):
+    vendor_id: str
+    delivery_risk: RiskComponent
+    quality_risk: RiskComponent
+    supplier_risk: RiskComponent
+    payment_risk: RiskComponent
+    overall_risk: RiskComponent
+    supplier_health_score: float = Field(..., description="Deterministic supplier health score (0-1)")
+    is_low_confidence: bool = Field(False, description="Flagged if < 5 transactions or zero category spend")
