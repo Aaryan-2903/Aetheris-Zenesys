@@ -6,3 +6,4 @@ supabase
 scikit-learn
 pandas
 joblib
+reportlab

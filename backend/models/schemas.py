@@ -236,3 +236,66 @@ class VendorFeedbackSummary(BaseModel):
     average_quality_rating: float
     average_delivery_rating: float
     average_responsiveness_rating: float
+
+class VendorFeedbackSummary(BaseModel):
+    vendor_id: str
+    feedback_count: int
+    average_overall_rating: float
+    average_quality_rating: float
+    average_delivery_rating: float
+    average_responsiveness_rating: float
+
+# --- Purchase Order Schemas ---
+
+class ReturnAndRefundPolicy(BaseModel):
+    return_window_days: int
+    eligible_return_conditions: str
+    refund_method: str
+    refund_processing_days: int
+    return_shipping_responsibility: str
+    restocking_fee_percentage: float
+    non_returnable_conditions: str
+
+class PurchaseOrderRequest(BaseModel):
+    procurement_request_id: str
+    vendor_id: str
+    category: str
+    item_description: str
+    quantity: int
+    unit_price: float
+    selected_warranty_plan: Optional[str] = None
+    warranty_fee: float = 0.0
+    insurance_provider: Optional[str] = None
+    insurance_cost: float = 0.0
+    payment_terms: str
+    expected_delivery_date: str
+    contract_id: Optional[str] = None
+    warranty_id: Optional[str] = None
+    insurance_id: Optional[str] = None
+    return_and_refund_policy: Optional[ReturnAndRefundPolicy] = None
+    
+class PurchaseOrderResponse(BaseModel):
+    purchase_order_id: str
+    procurement_request_id: str
+    vendor_id: str
+    vendor_name: str
+    category: str
+    item_description: str
+    quantity: int
+    unit_price: float
+    subtotal: float
+    selected_warranty_plan: Optional[str] = None
+    warranty_fee: float = 0.0
+    insurance_provider: Optional[str] = None
+    insurance_cost: float = 0.0
+    total_amount: float
+    payment_terms: str
+    expected_delivery_date: str
+    contract_id: Optional[str] = None
+    warranty_id: Optional[str] = None
+    insurance_id: Optional[str] = None
+    return_and_refund_policy: Optional[ReturnAndRefundPolicy] = None
+    payment_status: str
+    status: str
+    created_at: str
+
