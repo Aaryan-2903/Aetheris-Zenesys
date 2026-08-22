@@ -192,3 +192,17 @@ class InsuranceResponse(BaseModel):
     expiry_date: str
     status: str
     coverage_description: str
+
+# --- Vendor Intelligence Schemas ---
+
+class RepeatRatioRequest(BaseModel):
+    vendor_id: str
+    total_orders: int = Field(..., gt=0, description="Total number of orders")
+    repeat_orders: int = Field(..., ge=0, description="Number of repeat orders")
+
+class RepeatRatioResponse(BaseModel):
+    vendor_id: str
+    total_orders: int
+    repeat_orders: int
+    order_repeat_ratio: float = Field(..., ge=0.0, le=100.0, description="Repeat Ratio percentage")
+    interpretation: str
