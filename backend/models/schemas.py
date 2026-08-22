@@ -297,5 +297,28 @@ class PurchaseOrderResponse(BaseModel):
     return_and_refund_policy: Optional[ReturnAndRefundPolicy] = None
     payment_status: str
     status: str
+    order_tracking_status: str = "PENDING_PAYMENT"
+    razorpay_order_id: Optional[str] = None
+    razorpay_payment_id: Optional[str] = None
     created_at: str
+
+# --- Payment Schemas ---
+
+class PaymentCreateRequest(BaseModel):
+    purchase_order_id: str
+
+class PaymentCreateResponse(BaseModel):
+    purchase_order_id: str
+    razorpay_order_id: str
+    amount: int
+    currency: str
+    key_id: str
+    payment_status: str
+
+class PaymentVerifyRequest(BaseModel):
+    purchase_order_id: str
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+
 

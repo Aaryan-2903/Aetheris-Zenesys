@@ -35,8 +35,11 @@ def create_purchase_order(request: PurchaseOrderRequest) -> PurchaseOrderRespons
         warranty_id=request.warranty_id,
         insurance_id=request.insurance_id,
         return_and_refund_policy=request.return_and_refund_policy,
-        payment_status="Pending",
+        payment_status="PENDING_PAYMENT",
         status="Created",
+        order_tracking_status="PENDING_PAYMENT",
+        razorpay_order_id=None,
+        razorpay_payment_id=None,
         created_at=datetime.utcnow().isoformat() + "Z"
     )
     purchase_order_db.append(po)
@@ -47,6 +50,14 @@ def get_purchase_order(purchase_order_id: str) -> PurchaseOrderResponse:
         if po.purchase_order_id == purchase_order_id:
             return po
     raise HTTPException(status_code=404, detail="Purchase Order not found")
+
+def update_purchase_order(po: PurchaseOrderResponse):
+    for i, existing_po in enumerate(purchase_order_db):
+        if existing_po.purchase_order_id == po.purchase_order_id:
+            purchase_order_db[i] = po
+            return po
+    raise HTTPException(status_code=404, detail="Purchase Order not found")
+
 
 def generate_purchase_order_pdf(purchase_order_id: str) -> io.BytesIO:
     po = get_purchase_order(purchase_order_id)
